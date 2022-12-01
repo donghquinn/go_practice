@@ -11,6 +11,23 @@ func sum(first_number int, second_number int) int {
 
 }
 
+// defer는 먼저 함수의 최종 리턴을 한 후 그 과정을 역순으로 보여준다.
+func deferTest() {
+	total := 0
+
+	for i := 0; i < 5; i += 1 {
+		defer fmt.Println("Counts: %d", i)
+
+		total += i
+
+		defer fmt.Println("Total Count: ", total)
+	}
+
+	fmt.Println("Final Total Count Ended: ", total)
+
+	return
+}
+
 func main() {
 	const a = 3
 	const b = 3
@@ -25,4 +42,7 @@ func main() {
 	// 정상출력
 	fmt.Println("The Sum Value:", sum(a, b))
 	fmt.Printf("%d", global_function)
+
+	fmt.Println("Defer Test Start")
+	deferTest()
 }
