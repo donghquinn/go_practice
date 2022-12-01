@@ -15,7 +15,8 @@ type User struct {
 
 func postUser() {
 	const exampleUrl = "https://www.example.com"
-	const userInfo = http.Post(exampleUrl)
+
+	// const userInfo = http.Post(exampleUrl)
 }
 
 func apiListening() {
