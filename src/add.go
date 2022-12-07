@@ -4,6 +4,14 @@ import (
 	"fmt"
 )
 
+type User struct {
+	name   string
+	age    string
+	email  string
+	birth  string
+	gender string
+}
+
 // 총합 함수
 func sum(first_number int, second_number int) int {
 
