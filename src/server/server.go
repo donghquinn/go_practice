@@ -40,7 +40,7 @@ func handleRequests(users ...user) {
 	log.Fatal(http.ListenAndServe(port, nil))
 }
 
-func main() {
+func test() {
 	var Users []user
 
 	Users = []user{
