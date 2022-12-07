@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	_ "strings"
+
+	// "strings"
 
 	mux "github.com/gorilla/mux"
 )
@@ -52,46 +55,37 @@ func hellowReturn(write http.ResponseWriter, read *http.Request) {
 func userSetReturn(write http.ResponseWriter, read *http.Request) {
 	fmt.Println("Endpoint: Users")
 
-	parametr := mux.Vars(read)
+	parameters := read.URL.Query()
 
-	if parametr == nil {
-		errMsg := "No Parameter Provided"
+	var parameterArray []string
 
-		json.NewEncoder(write).Encode(errMsg)
+	json.NewEncoder(write).Encode(parameters)
+
+	for params, value := range parameters {
+		fmt.Println(params, "=>", value)
+
+		parameterArray = append(parameterArray, value...)
 	}
 
-	name := parametr["name"]
-	age := parametr["age"]
-	gender := parametr["gender"]
-	email := parametr["email"]
-	dateOfBirth := parametr["dateOfBirth"]
-
-	for _, user := range Users {
-		user.age = age
-		user.name = name
-		user.gender = gender
-		user.email = email
-		user.dateOfBirth = dateOfBirth
-
-	}
-	json.NewEncoder(write).Encode(name)
-	json.NewEncoder(write).Encode(age)
-	json.NewEncoder(write).Encode(gender)
-	json.NewEncoder(write).Encode(email)
-	json.NewEncoder(write).Encode(dateOfBirth)
-
+	json.NewEncoder(write).Encode(parameterArray)
 	fmt.Fprintf(write, "User Request")
 }
 
 func handleRequests(users ...user) {
-	router := mux.NewRouter().StrictSlash(false)
+	router := mux.NewRouter()
 
-	router.HandleFunc("/users/{name}/{age}/{gender}/{email}/{dateOfBirth}", userSetReturn)
+	router.HandleFunc("/users", userSetReturn)
 	router.HandleFunc("/", homeReturn)
 	router.HandleFunc("/hello", hellowReturn)
 
 	println("Listening: 8080")
-	log.Fatal(http.ListenAndServe(port, router))
+
+	err := http.ListenAndServe(port, router)
+
+	if err != nil {
+		fmt.Println(err)
+		log.Fatal(err)
+	}
 }
 
 func main() {
