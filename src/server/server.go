@@ -16,15 +16,15 @@ import (
 
 const port = ":8080"
 
-type user struct {
-	name        string `json:"name"`
-	age         string `json:"age"`
-	gender      string `json:"gender"`
-	email       string `json:"email"`
-	dateOfBirth string `json:"dateOfBirth"`
+type UserStruct struct {
+	Name        string `json:"name"`
+	Age         string `json:"age"`
+	Gender      string `json:"gender"`
+	Email       string `json:"email"`
+	DateOfBirth string `json:"dateOfBirth"`
 }
 
-var Users []user
+// var Users []UserStruct
 
 /*
 "/" 로 들어온 요청 핸들링
@@ -63,14 +63,22 @@ func userSetReturn(write http.ResponseWriter, read *http.Request) {
 		parameterArray = append(parameterArray, value...)
 	}
 
-	var User []user
+	User := &UserStruct{
+		Name:        parameterArray[0],
+		Age:         parameterArray[1],
+		Gender:      parameterArray[2],
+		Email:       parameterArray[3],
+		DateOfBirth: parameterArray[4],
+	}
 
+	json.NewEncoder(write).Encode(parameterArray)
 	json.NewEncoder(write).Encode(User)
 	fmt.Fprintf(write, "User Request")
+	fmt.Fprintln(write, User)
 }
 
 // 라우터 핸들러
-func handleRequests(users ...user) {
+func handleRequests(users ...UserStruct) {
 	router := mux.NewRouter()
 
 	router.HandleFunc("/users", userSetReturn)
@@ -90,7 +98,7 @@ func handleRequests(users ...user) {
 
 func main() {
 
-	fmt.Println(Users)
+	// fmt.Println(User)
 
 	// log.Default(Users)
 
