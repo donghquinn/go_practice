@@ -1,10 +1,13 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	_ "strings"
+
+	_ "github.com/go-sql-driver/mysql"
 
 	"log"
 	// "strings"
@@ -21,6 +24,11 @@ func main() {
 	fmt.Println("Listening on: ", port)
 
 	router.HandleFunc("/admin/count", handleCount)
+}
+
+func database() {
+	db, err := sql.Open("mysql", "")
+
 }
 
 func postRequest(request *http.Request) {
