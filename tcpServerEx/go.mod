@@ -1,3 +1,3 @@
-module example.com/m
+module donghquinn/tcpGo
 
 go 1.19
