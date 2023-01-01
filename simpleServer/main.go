@@ -3,13 +3,17 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
+	"os"
 )
 
 /*
 참고: https://github.com/SimonWaldherr/golang-examples/blob/master/advanced/httpupload.go
 */
+
+var uploadDir string
 
 func main() {
 	fmt.Println("Server is Starting")
@@ -36,7 +40,7 @@ func fileUpHandler(response http.ResponseWriter, request *http.Request) {
 		log.Fatal("Request Methos Is Not POST")
 
 		// 응답 인코딩
-		json.NewEncoder(response).Encode("Request Methos Is Not POST")
+		json.NewEncoder(response).Encode("Request Method Is Not POST")
 
 		return
 	}
@@ -48,4 +52,36 @@ func fileUpHandler(response http.ResponseWriter, request *http.Request) {
 
 		return
 	}
+
+	for {
+		// 각각의 파트를 디렉토리로 복사
+		part, err := reader.NextPart()
+
+		if err == io.EOF {
+			break
+		}
+
+		// 파일 이름이 비어있다면 이 파트는 스킵
+		if part.FileName() == "" {
+			continue
+		}
+
+		// 로컬에 파일 생성 - 생성되는 파일 이름은 업로드 타겟 + 요청 파일 이름
+		dist, err := os.Create(uploadDir + part.FileName())
+
+		// 에러 발생 시 에러 응답 및 얼리 리턴
+		if err != nil {
+			log.Fatal(err)
+
+			http.Error(response, err.Error(), http.StatusInternalServerError)
+
+			return
+		} else {
+			// 에러가 없을 시 업로드 시작
+			defer dist.Close()
+
+			log.Println("File Upload Started...", part.FileName())
+		}
+	}
+
 }
