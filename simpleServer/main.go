@@ -13,6 +13,7 @@ import (
 참고: https://github.com/SimonWaldherr/golang-examples/blob/master/advanced/httpupload.go
 */
 
+// 파일 업로드 디렉토리 변수
 var uploadDir string
 
 func main() {
