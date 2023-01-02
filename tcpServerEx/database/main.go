@@ -1,4 +1,4 @@
-package main
+package db
 
 import (
 	"database/sql"
@@ -13,18 +13,22 @@ import (
 
 var countResult string
 
-func database() {
+func main() {
 	db := openDb()
 	queryCount(db)
+	getEnv()
 }
 
-func openDb() *sql.DB {
+func getEnv() {
 	err := godotenv.Load(".env")
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
+}
+
+func openDb() *sql.DB {
 	dbPasswd := os.Getenv("DB_PASS")
 	dbUser := os.Getenv("DB_USER")
 	dbHost := os.Getenv("DB_HOST")
@@ -59,6 +63,5 @@ func queryCount(database *sql.DB) {
 		count.Scan(&countResult)
 
 		fmt.Println(countResult)
-
 	}
 }
