@@ -24,9 +24,14 @@ func main() {
 
 }
 
+// count result set response
 func resultHandler(response http.ResponseWriter, request *http.Request) {
 	mysql()
 
+	setResponse(response)
+}
+
+func setResponse(response http.ResponseWriter) {
 	json.NewEncoder(response).Encode("Hi There")
 
 	responseBase := `total Counts: %s`
@@ -34,9 +39,9 @@ func resultHandler(response http.ResponseWriter, request *http.Request) {
 	responsing := fmt.Sprintf(responseBase, countResult)
 
 	json.NewEncoder(response).Encode(responsing)
-
 }
 
+// mysql controller
 func mysql() {
 	getEnv()
 
@@ -44,11 +49,13 @@ func mysql() {
 	queryCount(db)
 }
 
+// env loader
 func getEnv() {
 	err := godotenv.Load(".env")
 
 	if err != nil {
 		log.Fatal(err)
+		panic(err.Error())
 	}
 
 }
@@ -81,12 +88,15 @@ func openDb() *sql.DB {
 }
 
 func queryCount(database *sql.DB) {
+	// get table name
 	clientTable := os.Getenv("CLIENT_TABLE")
 
 	selectState := `SELECT COUNT(name) as count FROM %s`
 
+	// make query statement
 	queryStatement := fmt.Sprintf(selectState, clientTable)
 
+	// request query
 	count, err := database.Query(queryStatement)
 
 	if err != nil {
