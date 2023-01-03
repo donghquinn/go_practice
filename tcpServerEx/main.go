@@ -13,12 +13,25 @@ import (
 	"github.com/joho/godotenv"
 )
 
+// 쿼리한 결과 값
 var countResult string
 
+/*
+응답 구조체
+대문자 - export field로 인식
+*/
+type ResponseType struct {
+	CodeRes int
+	DataRes string
+	ErrMsg  string
+}
+
 func main() {
+	// "/result" 라우트에 대한 핸들러
 	http.HandleFunc("/result", resultHandler)
 
 	fmt.Println("Server Start")
+
 	// server start
 	http.ListenAndServe(":8080", nil)
 
@@ -31,14 +44,18 @@ func resultHandler(response http.ResponseWriter, request *http.Request) {
 	setResponse(response)
 }
 
+// 응답
 func setResponse(response http.ResponseWriter) {
+
 	json.NewEncoder(response).Encode("Hi There")
 
 	responseBase := `total Counts: %s`
 
 	responsing := fmt.Sprintf(responseBase, countResult)
 
-	json.NewEncoder(response).Encode(responsing)
+	responseData := ResponseType{CodeRes: 200, DataRes: responsing, ErrMsg: ""}
+
+	json.NewEncoder(response).Encode(responseData)
 }
 
 // mysql controller
@@ -57,9 +74,9 @@ func getEnv() {
 		log.Fatal(err)
 		panic(err.Error())
 	}
-
 }
 
+// Database 연결 함수
 func openDb() *sql.DB {
 	// 환경변수 로드
 	dbPasswd := os.Getenv("DB_PASS")
