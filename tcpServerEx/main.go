@@ -81,7 +81,13 @@ func openDb() *sql.DB {
 }
 
 func queryCount(database *sql.DB) {
-	count, err := database.Query("SELECT COUNT(name) as count FROM client")
+	clientTable := os.Getenv("CLIENT_TABLE")
+
+	selectState := `SELECT COUNT(name) as count FROM %s`
+
+	queryStatement := fmt.Sprintf(selectState, clientTable)
+
+	count, err := database.Query(queryStatement)
 
 	if err != nil {
 		panic(err.Error())
