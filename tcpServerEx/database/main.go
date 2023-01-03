@@ -1,4 +1,4 @@
-package db
+package main
 
 import (
 	"database/sql"
@@ -14,9 +14,10 @@ import (
 var countResult string
 
 func main() {
+	getEnv()
+
 	db := openDb()
 	queryCount(db)
-	getEnv()
 }
 
 func getEnv() {
@@ -29,18 +30,21 @@ func getEnv() {
 }
 
 func openDb() *sql.DB {
+	// 환경변수 로드
 	dbPasswd := os.Getenv("DB_PASS")
 	dbUser := os.Getenv("DB_USER")
 	dbHost := os.Getenv("DB_HOST")
 	dbName := os.Getenv("DB_NAME")
 	dbPort := os.Getenv("DB_PORT")
 
-	fmt.Println(dbUser, dbPasswd, dbName, dbHost, dbHost, dbPort)
+	// fmt.Println(dbUser, dbPasswd, dbName, dbHost, dbHost, dbPort)
 
-	fmt.Println(dbUser + ":" + dbPasswd + "@" + "tcp" + "(" + dbHost + ":" + dbPort + ")" + "/" + dbName)
+	// fmt.Println(dbUser + ":" + dbPasswd + "@" + "tcp" + "(" + dbHost + ":" + dbPort + ")" + "/" + dbName)
 
+	// Database 연결
 	database, err := sql.Open("mysql", dbUser+":"+dbPasswd+"@"+"tcp"+"("+dbHost+":"+dbPort+")"+"/"+dbName)
 
+	// Database 연결 설정
 	database.SetMaxOpenConns(10)
 	database.SetMaxIdleConns(10)
 
@@ -64,4 +68,5 @@ func queryCount(database *sql.DB) {
 
 		fmt.Println(countResult)
 	}
+
 }
